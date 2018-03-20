@@ -1,0 +1,426 @@
+{
+	"index_patterns": ["dmarcxml-*"],
+	"settings": {
+		"index": {
+			"refresh_interval": "5s",
+			"number_of_shards": 1,
+			"number_of_replicas": 0
+		}
+	},
+	"mappings": {
+		"doc": {
+			"properties": {
+				"@timestamp": {
+					"type": "date"
+				},
+				"@version": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword"
+						}
+					}
+				},
+				"auth_result": {
+					"properties": {
+						"dkim_domain": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"dkim_result": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"dkim_human_result": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"dkim_selector": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"spf_domain": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"spf_result": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"spf_scope": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						}
+					}
+				},
+				"dmarc": {
+					"properties": {
+						"override_comment": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"override_type": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						}
+					}
+				},
+				"email": {
+					"properties": {
+						"count": {
+							"type": "short"
+						},
+						"dkim_evaluation": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"dmarc_action": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"envelope_from": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"envelope_to": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"header_from": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"source_ip": {
+							"type": "ip"
+						},
+						"spf_evaluation": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						}
+					}
+				},
+				"geoip": {
+					"properties": {
+						"city_name": {
+						"type": "text",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						}
+					},
+						"continent_code": {
+						"type": "text",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						}
+					},
+						"country_code2": {
+						"type": "text",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						}
+					},
+						"country_code3": {
+						"type": "text",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						}
+					},
+						"country_name": {
+						"type": "text",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						}
+					},
+						"dma_code": {
+						"type": "long"
+					},
+						"ip": {
+						"type": "ip",
+						"fields": {
+							"keyword": {
+								"type": "keyword"
+							}
+						}
+					},
+						"latitude": {
+							"type": "float"
+						},
+						"location": {
+							"properties": {
+								"coordinates": {
+									"type": "geo_point",
+									"fields": {
+										"keyword": {
+											"type": "keyword"
+										}
+									}
+								},
+								"lat": {
+									"type": "float"
+								},
+								"lon": {
+									"type": "float"
+								},
+								"longitude": {
+									"type": "float"
+								}
+							}
+						},
+						"postal_code": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+								"type": "keyword"
+								}
+							}
+						},
+						"region_code": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"region_name": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"timezone": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						}
+					}
+				},
+				"message": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword"
+						}
+					}
+				},
+				"path": {
+				"type": "text",
+					"fields": {
+						"keyword": {
+						"type": "keyword"
+						}
+					}
+				},
+				"policy": {
+					"properties": {
+						"dkim_alignment": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"dmarc": {
+							"properties": {
+								"domain_action": {
+									"type": "text",
+									"fields": {
+										"keyword": {
+											"type": "keyword"
+										}
+									}
+								},
+								"subdomain_action": {
+									"type": "text",
+									"fields": {
+										"keyword": {
+											"type": "keyword"
+										}
+									}
+								}
+							}
+						},
+						"domain": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"percentage": {
+							"type": "short",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"forensic_reporting": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"spf_alignment": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						}
+					}
+				},
+				"report": {
+					"properties": {
+						"org_contact_additional": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"end": {
+							"type": "date",
+							"format": "epoch_second",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"id": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"org": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"org_contact": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"error": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						},
+						"start": {
+							"type": "date",
+							"format": "epoch_second",
+							"fields": {
+								"keyword": {
+									"type": "keyword"
+								}
+							}
+						}
+					}
+				},
+				"tags": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword"
+						}
+					}
+				}
+			}
+		}
+	}
+}

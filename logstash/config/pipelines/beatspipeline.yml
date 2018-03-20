@@ -1,0 +1,19 @@
+input {
+  beats {
+    id => "Beats Input"
+    host => "0.0.0.0"
+    port => 5044
+    include_codec_tag => false
+  }
+}
+output {
+  elasticsearch{
+    id => "Output to Elasticsearch"
+    hosts => [ "http://ElasticServerHostnameOrIP:port" ]
+    index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+    manage_template => false
+# Uncomment and configure the below for xpack integration
+#   user: "elastic"
+#   password: "changeme"
+  }
+}

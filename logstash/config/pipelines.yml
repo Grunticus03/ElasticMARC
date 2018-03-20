@@ -1,0 +1,7 @@
+ - pipeline.id: dmarcxml
+#  Do not include drive letter in below path.
+   path.config: "/logstash/config/pipelines/dmarcpipeline.yml"
+#
+# Uncomment the below to use a preconfigured beats pipeline.
+# - pipeline.id: beats
+#   path.config: "/logstash/config/pipelines/beatspipeline.yml"

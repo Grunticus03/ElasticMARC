@@ -1,0 +1,102 @@
+input {
+  file {
+    id => "Ingest\DMARC\*.xml"
+    path => "D:/ElasticStack/Ingest/DMARC/*.xml"
+    discover_interval => 5
+    codec => multiline {
+      auto_flush_interval => 5
+      negate => true
+      pattern => "<record>"
+      what => "previous"
+      multiline_tag => ""
+    }
+  }
+}
+filter {
+  xml {
+    id => "Field Extraction"
+    store_xml => false
+    source => "message"
+    xpath => [
+      "record/report_metadata/org_name/text()", "report.org",
+      "record/report_metadata/email/text()", "report.org_contact",
+      "record/report_metadata/extra_contact_info/text()", "report.org_contact_additional",
+      "record/report_metadata/report_id/text()", "report.id",
+      "record/report_metadata/date_range/begin/text()", "report.start",
+      "record/report_metadata/date_range/end/text()", "report.end",
+      "record/report_metadata/error/text()", "report.error",
+      "record/policy_published/domain/text()", "policy.domain",
+      "record/policy_published/aspf/text()", "policy.spf_alignment",
+      "record/policy_published/adkim/text()", "policy.dkim_alignment",
+      "record/policy_published/p/text()", "policy.dmarc.domain_action",
+      "record/policy_published/sp/text()", "policy.dmarc.subdomain_action",
+      "record/policy_published/pct/text()", "policy.percentage",
+      "record/policy_published/fo/text()", "policy.forensic_reporting",
+      "record/row/source_ip/text()", "email.source_ip",
+      "record/row/count/text()", "email.count",
+      "record/row/policy_evaluated/disposition/text()", "email.dmarc_action",
+      "record/row/policy_evaluated/spf/text()", "email.spf_evaluation",
+      "record/row/policy_evaluated/dkim/text()", "email.dkim_evaluation",
+      "record/row/policy_evaluated/reason/type/text()", "dmarc.override_type",
+      "record/row/policy_evaluated/reason/comment/text()", "dmarc.override_comment",
+      "record/identifiers/envelope_to/text()", "email.envelope_to",
+      "record/identifiers/envelope_from/text()", "email.envelope_from",
+      "record/identifiers/header_from/text()", "email.header_from",
+      "record/auth_results/dkim/domain/text()", "auth_result.dkim_domain",
+      "record/auth_results/dkim/selector/text()", "auth_result.dkim_selector",
+      "record/auth_results/dkim/result/text()", "auth_result.dkim_result",
+      "record/auth_results/dkim/human_result/text()", "auth_result.dkim_human_result",
+      "record/auth_results/spf/domain/text()", "auth_result.spf_domain",
+      "record/auth_results/spf/scope/text()", "auth_result.spf_scope",
+      "record/auth_results/spf/result/text()", "auth_result.spf_result"
+    ]
+  }
+  mutate {
+    id => "Field Normalize"
+    strip => [
+      "report.end",
+      "report.start"
+    ]
+    lowercase => [
+      "email.dkim_evaluation",
+      "email.dmarc_action",
+      "email.spf_evaluation",
+      "policy.dmarc.domain_action",
+      "policy.dmarc.subdomain_action",
+      "policy.dkim_alignment",
+      "policy.spf_alignment"
+    ]
+    gsub => [
+      "policy.dkim_alignment", "r", "Relaxed",
+      "policy.dkim_alignment", "s", "Strict",
+      "policy.spf_alignment", "r", "Relaxed",
+      "policy.spf_alignment", "s", "Strict",
+      "policy.forensic_reporting", "0", "All Fail",
+      "policy.forensic_reporting", "1", "Any Fail",
+      "policy.forensic_reporting", "d", "DKIM Fail",
+      "policy.forensic_reporting", "s", "SPF Fail"
+    ]
+  }
+  geoip {
+    id => "IP Geo-Mapping"
+    source => "email.source_ip"
+    add_field => {
+      "[geoip][location][coordinates]" => "%{[geoip][location][lat]}, %{[geoip][location][lon]}"
+    }
+    remove_field => ["@version", "host"]
+  }
+  if "_geoip_lookup_failure" in [tags] {
+    drop { }
+  }
+}
+output {
+  elasticsearch {
+    id => "Send to Elasticsearch"
+    hosts => ["10.244.10.77:9200"]
+#    user => "elastic"
+#    password => "changeme"
+    template => "D:/ElasticStack/Apps/Logstash/templates/dmarcxmltemplate.json"
+    template_name => "dmarcxml"
+    index => "dmarcxml-%{+YYYY.MM.dd}"
+  }
+}

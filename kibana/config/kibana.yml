@@ -1,0 +1,12 @@
+server.port: 80
+server.host: "ServerHostname"
+server.name: "ServerHostname"
+elasticsearch.url: "http://ServerHostname:9200"
+logging.dest: "C:/Kibana/logs/kibana.log"
+logging.useUTC: false
+logging.silent: false
+logging.quiet: false
+logging.verbose: false
+# Uncomment and configure below for xpack integration
+#elasticsearch.username: "kibana"
+#elasticsearch.password: "kibana"
