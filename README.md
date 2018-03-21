@@ -1,4 +1,5 @@
-![alt text](ElasticMARC/ElasticMARC.JPG )# ElasticMARC
+![alt text](assets/ElasticMARC.JPG )
+# ElasticMARC
 
 ElasticMARC is a solution developed using Elastic's [Elastic Stack](https://www.elastic.co/products) to ingest, enrich, and visualize DMARC aggregate report data.  The primary focus of ElasticMARC is to provide a simple, guided setup utilizing a Windows platform.  While Linux platforms can utilize most of this setup, a PowerShell script is used to modify the XML reports prior to being ingested by Elastic Stack.
 
