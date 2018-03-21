@@ -1,0 +1,48 @@
+[
+  {
+    "_id": "37c99200-0fbe-11e8-8dc5-e141d701899b",
+    "_type": "search",
+    "_source": {
+      "title": "DMARC - Reported Policies",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "DMARC Policy Action",
+        "DKIM Mode",
+        "SPF Mode",
+        "Application Percentage"
+      ],
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"dmarcxml-*\",\"highlightAll\":true,\"version\":true,\"query\":{\"query\":\"\",\"language\":\"lucene\"},\"filter\":[{\"meta\":{\"index\":\"dmarcxml-*\",\"negate\":false,\"disabled\":false,\"alias\":null,\"type\":\"exists\",\"key\":\"DMARC Policy Action\",\"value\":\"exists\"},\"exists\":{\"field\":\"DMARC Policy Action\"},\"$state\":{\"store\":\"appState\"}}]}"
+      }
+    }
+  },
+  {
+    "_id": "285422c0-144d-11e8-8dc5-e141d701899b",
+    "_type": "search",
+    "_source": {
+      "title": "DMARC - City, Region, Nation",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "email.source_ip",
+        "geoip.city_name",
+        "geoip.region_name",
+        "geoip.country_name"
+      ],
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"dmarcxml-*\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[]}"
+      }
+    }
+  }
+]
