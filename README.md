@@ -260,10 +260,11 @@ Sample dashboards and visualizations have been created to assist in familiarizat
 1.	Open a browser and navigate to your Kibana instance.
 2.	Select Management on the left side, then Saved Objects.
 3.	Click the Import button at the top right of this page.
-4.	Navigate to the kibana\visuals folder and select dmarcvisuals.json
+4.	Navigate to the kibana\visuals folder and select DMARCsearches.json
 5.	If prompted, select Yes, to overwrite all saved objects.
-6.	To view the preconfigured dashboards, select Dashboard on the left side of the page.
-7.	To view individual visualizations, select Visualize on the left side of the page.
+6.	Repeat step 4 to import DMARCVisuals.json and DMARCDashboards.json.
+7. To view the preconfigured dashboards, select Dashboard on the left side of the page.
+8.	To view individual visualizations, select Visualize on the left side of the page.
 
 ### Optional Field Formatting
 Kibana provides the ability to format fields in a variety of ways.  In particular, you can create links on fields utilizing the field value as part of the URL.  Process to do this is outlined below.
