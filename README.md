@@ -90,9 +90,12 @@ Elasticsearch Installation
 6.	Open an administrative CMD window and enter the following commands: <br/>
 Root\bin\elasticsearch-service.bat install<br/>
 Root\bin\elasticsearch-service.bat manager<br/>
-7.  In the window that appears, modify the following:<br/>
-**(Optional) Display Name:** I prefer to remove the version information.<br/>
-**Startup Type:**  Automatic<br/>
+7.  In the window that appears, modify the following:
+
+| Setting | Value |
+| :--- | :--- |
+| (Optional) Display Name: | I prefer to remove the version information |
+| Startup Type: | Automatic |
 8.  Select apply, start the service, and close the service manager window.
 
 ***Elasticsearch installation is now complete!***
@@ -109,7 +112,7 @@ Kibana Installation
 | Server.host: | Server hostname |
 | Server.name: | Server hostname |
 | Elasticsearch.url: | http&#58;//SERVERHOSTNAME:IP |
-| Logging.dest: | Filen and path for logging.  Folder structure must already exist, file will be created, preserve double quotes around value |
+| Logging.dest: | File and path for logging.  Folder must exist, file will be created, preserve double quotes |
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana. In the following steps, root refers to the location that NSSM has been extracted to.
 5.  Decompress NSSM to your intended installation location.
@@ -174,7 +177,7 @@ Logstash Installation
 | :--- | :--- |
 | Line 12 hosts => | ServerName:Port Logstash sends data to once it’s been processed. Preserve brackets and double quotes |
 *   Logstash does not have a service installer, we will utilize NSSM to create a service for Logstash. In the following steps, root refers to the location that NSSM has been extracted to.
-9.  Open an administrative CMD prompt and enter the following command:
+9.  Open an administrative CMD prompt and enter the following command:<br/>
 Root\win64\nssm.exe install Logstash
 10. On the Application tab, enter the following:
 
@@ -190,8 +193,8 @@ Root\win64\nssm.exe install Logstash
 | (Optional) Description: | Logstash VER (I.E. Logstash 6.2.2) |
 | Startup Type: | Automatic |
 12. Select, Install Service and click OK to finish.
-13. In the administrative CMD prompt enter the following to start the Logstash service.
-Powershell -c Start-Service Logstash
+13. In the administrative CMD prompt enter the following to start the Logstash service.<br/>
+Powershell -c Start-Service Logstash<br/><br/>
 ***Logstash installation is now complete!***
 
 Configuring Kibana
