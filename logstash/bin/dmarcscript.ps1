@@ -70,10 +70,9 @@ if ($TIngest -eq $false) {
 #}
 
 #XML Restructure
-$XMLRoot = $FDst
-$XMLRepo = Get-Childitem $XMLRoot -Name "*.xml"
+$XMLRepo = Get-Childitem $FDst -Recurse | Where-object {$_.Mode -notlike "d*"}
 foreach ($xmlfile in $xmlrepo) {
-  [XML]$xml = Get-Content -Path "$XMLRoot\$xmlfile" 
+  [xml]$xml = Get-Content -Path $xmlfile.VersionInfo.FileName
   $xmlrecord = $xml.feedback.record
   foreach ($record in $xmlrecord) {
     $xmlreport = $xml.SelectSingleNode("//feedback/report_metadata").Clone()
