@@ -1,4 +1,4 @@
-![alt text](assets/ElasticMARC.JPG )
+![alt text](https://github.com/wwalker0307/ElasticMARC/blob/assets/ElasticMARC.JPG?raw=true)
 # ElasticMARC
 
 ElasticMARC is a solution developed using Elastic's [Elastic Stack](https://www.elastic.co/products) to ingest, enrich, and visualize DMARC aggregate report data.  The primary focus of ElasticMARC is to provide a simple, guided setup utilizing a Windows platform.  While Linux platforms can utilize most of this setup, a PowerShell script is used to modify the XML reports prior to being ingested by Elastic Stack.
@@ -7,12 +7,12 @@ ElasticMARC is a solution developed using Elastic's [Elastic Stack](https://www.
 
 Required Software
 ------
-•	[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)
-•	[Logstash](https://www.elastic.co/downloads/logstash)
-•	[Kibana](https://www.elastic.co/downloads/kibana)
-•	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-•	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)
-•	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)
+â€¢	[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)
+â€¢	[Logstash](https://www.elastic.co/downloads/logstash)
+â€¢	[Kibana](https://www.elastic.co/downloads/kibana)
+â€¢	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+â€¢	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)
+â€¢	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)
 
 
 Pre-requisites
@@ -23,8 +23,8 @@ Prior to installing the Elastic Stack, the following modifications are required.
 Failure to disable the Page File can have a significant impact on the performance and reliability of the Elastic Stack.
 1.	Open the System Properties window located in the control panel.
 2.	Select Advanced System Settings
-3.	On the Advanced tab, select Settings… under the Performance section.
-4.	Select the Advanced tab on the following window and then Change…
+3.	On the Advanced tab, select Settingsâ€¦ under the Performance section.
+4.	Select the Advanced tab on the following window and then Changeâ€¦
 5.	Uncheck Automatically manage paging file size for all drives, select the No paging file button, and click Set.6
 6.	Reboot computer.
 
@@ -32,8 +32,8 @@ Failure to disable the Page File can have a significant impact on the performanc
 The Elastic Stack relies on Java.  Ensure that you install the JDK, not JRE.  Versions verified with this configuration are Java 8u152 and 8u162.  Java 9.0.4 is not compatible at the time of this writing.  After installation of the JDK, you must configure an OS environment variable pointing to the JDK root folder.  
 1.	Open the System Properties window located in the control panel.
 2.	Select Advanced System Settings
-3.	On the Advanced tab, select Environment Variables…
-4.	In the window that appears, in the System Variables section, select New…
+3.	On the Advanced tab, select Environment Variablesâ€¦
+4.	In the window that appears, in the System Variables section, select Newâ€¦
 **Variable Name:**  JAVA_HOME
 **Variable Value:**  JAVAROOTFOLDER (E.G. C:\Program Files\Java\jdk1.8.0_162)
 
@@ -49,13 +49,13 @@ For simplicity and consistency, when referring to the installation location of a
 I have included prebuilt example configuration files for each Elastic Stack application.  These files require minimal modifications and are intended to get you up and running on a basic Elastic Stack implementation.
 
 ### Time Stamping
-When creating an Index, you have three options for the Time Filter field.  The decision on which field to use is dependent on your organization’s desires.  Be aware, once you’ve selected a field, you cannot change it without first recreating the index and then removing all previously indexed data.
-**@timestamp** – This will tag each event with the date and time that it was processed by Logstash.
-**Report.start** – This is the starting time for the reporting period as reported by the aggregate generator (remote MTA server).
-**Report.end** – This is the ending time for the reporting period as reported by the aggregate generator (remote MTA server).
+When creating an Index, you have three options for the Time Filter field.  The decision on which field to use is dependent on your organizationâ€™s desires.  Be aware, once youâ€™ve selected a field, you cannot change it without first recreating the index and then removing all previously indexed data.
+**@timestamp** â€“ This will tag each event with the date and time that it was processed by Logstash.
+**Report.start** â€“ This is the starting time for the reporting period as reported by the aggregate generator (remote MTA server).
+**Report.end** â€“ This is the ending time for the reporting period as reported by the aggregate generator (remote MTA server).
 
 ### Persistent Queue
-As of this writing, there is a [known issue](https://github.com/elastic/logstash/issues/9167) using disk buffering (persisted queue) with this configuration on Elastic Stack 6.1.1 – 6.2.2.  Previous versions may also be affected, please do not use disk buffering until further notice.  If you have a pre-existing Elastic Stack and are using persisted queue, using the multipipeline configuration (as configured in this implementation), will allow you to specify per pipeline queueing settings.
+As of this writing, there is a [known issue](https://github.com/elastic/logstash/issues/9167) using disk buffering (persisted queue) with this configuration on Elastic Stack 6.1.1 â€“ 6.2.2.  Previous versions may also be affected, please do not use disk buffering until further notice.  If you have a pre-existing Elastic Stack and are using persisted queue, using the multipipeline configuration (as configured in this implementation), will allow you to specify per pipeline queueing settings.
 
 ### Elastic Stack Applications
 The Elastic Stack applications do not have an installation process or executable.  Wherever you decompress the archives effectively becomes the installation location.  Ensure that you place the files in the proper location prior to configuration.
@@ -76,7 +76,7 @@ Elasticsearch Installation
 **(Optional) path.data:**  Where Elasticsearch will store indexed data.  By default, this is root\data.
 **(Optional) path.logs:**  Where Elasticsearch will store logs.  By default, this is root\logs.
 5.  Open root\config\jvm.options and modify the following, if necessary:
-**-Xms1g** – This determines the initial amount of RAM consumed by the Elasticsearch JVM.
+**-Xms1g** â€“ This determines the initial amount of RAM consumed by the Elasticsearch JVM.
 **-Xmx1g** - This determines the max amount of RAM consumed by the Elasticsearch JVM.
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 6.	Open an administrative CMD window and enter the following commands:
@@ -95,9 +95,9 @@ Kibana Installation
 2.  Copy the contents of ElasticMARC\kibana to the Kibana directory, overwriting any existing files.
 3.  Open root\config\kibana.yml and modify the following:
 **Server.port:** This is the port the server will listen for requests on.  Default is 5601
-**Server.host:** Set to server’s hostname.
-**Server.name:** Set to server’s hostname.
-**Elasticsearch.url:** Set to server’s hostname with http:// at the beginning and the port elasticsearch is configured to listen on, 9200 is default.
+**Server.host:** Set to serverâ€™s hostname.
+**Server.name:** Set to serverâ€™s hostname.
+**Elasticsearch.url:** Set to serverâ€™s hostname with http:// at the beginning and the port elasticsearch is configured to listen on, 9200 is default.
 **Logging.dest:** Filename and path for logging.  Folder structure must already exist, file will be created.  Preserve double quotes around value.
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana. In the following steps, root refers to the location that NSSM has been extracted to.
@@ -114,7 +114,7 @@ Root\win64\nssm.exe install Kibana
 9.  Select Install Service and click OK to finish.
 10. In the administrative CMD prompt enter the following to start the Kibana service.
 Powershell -c Start-Service Kibana
-11. After a few moments, you can verify Kibana’s functionality by opening a browser and pointing it to http://hostname:port as configured in Kibana.yml’s server.host and server.port properties.
+11. After a few moments, you can verify Kibanaâ€™s functionality by opening a browser and pointing it to http://hostname:port as configured in Kibana.ymlâ€™s server.host and server.port properties.
  
 
 Logstash Installation
@@ -128,19 +128,19 @@ Logstash Installation
 **http.port:**  Set to port for REST API to listen on.  Default is 9600.
 **(Optional) Log.level:**  Uncomment and set to desired level. Trace is most detailed but very chatty.  Debug is usually sufficient for troubleshooting.
 5.  Open root\config\jvm.options and modify the following:
-**-Xms1g** – This determines the initial amount of RAM consumed by the Logstash JVM.
+**-Xms1g** â€“ This determines the initial amount of RAM consumed by the Logstash JVM.
 **-Xmx1g** - This determines the max amount of RAM consumed by the Logstash JVM.
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Logstash JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 6.  Open root\config\pipelines.yml and modify the following:
 **Path.config:** Set this to the location of /root/config/pipelines/dmarcpipeline.yml. Do not use a drive letter, use forward slashes in path, and preserve double quotes around the path.
-*   (Optional) If you’d like to implement Beats data ingesting, you can uncomment the second set of pipeline values that are preconfigured for this purpose.
+*   (Optional) If youâ€™d like to implement Beats data ingesting, you can uncomment the second set of pipeline values that are preconfigured for this purpose.
 7.  Open root\config\pipelines\dmarcpipeline.yml and modify the following:
 **Line 3 id =>** This is a cosmetic tag assigned to this portion of the ingest pipeline.  I recommend setting it to the folder you will be ingesting the DMARC XML files. Preserve double quotes around value. This is visible in the Pipeline Monitor if you configure the X-Pack plugin
 **Line 4 path =>** This is the folder that Logstash will monitor for files to ingest. Use forward slashes in path, preserve double quotes around value, ensure you set to *.xml after the folder path.
-**Line 95 hosts =>** This is the servername:port that Logstash will send the data to once it’s been processed.  Preserve the brackets and double quotes around the value.
+**Line 95 hosts =>** This is the servername:port that Logstash will send the data to once itâ€™s been processed.  Preserve the brackets and double quotes around the value.
 **Line 98 template =>** This is the location of the Elasticsearch template that is used to configure the fields for each event.  Use drive letter, use forward slashes in path, and preserve quotes around value.
 8.  (Optional) If implementing Beats, open root\config\pipelines\beatspipeline.yml and modify the following:
-**Line 12 hosts =>** This is the servername:port that Logstash will send the data to once it’s been processed.  Preserve the brackets and double quotes around the value.
+**Line 12 hosts =>** This is the servername:port that Logstash will send the data to once itâ€™s been processed.  Preserve the brackets and double quotes around the value.
 *   Logstash does not have a service installer, we will utilize NSSM to create a service for Logstash. In the following steps, root refers to the location that NSSM has been extracted to.
 9.  Open an administrative CMD prompt and enter the following command:
 Root\win64\nssm.exe install Logstash
