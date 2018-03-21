@@ -38,10 +38,9 @@ The Elastic Stack relies on Java.  Ensure that you install the JDK, not JRE.  Ve
 2.	Select Advanced System Settings
 3.	On the Advanced tab, select Environment Variables…
 4.	In the window that appears, in the System Variables section, select New…
-
-**Variable Name:**  JAVA_HOME
-
-**Variable Value:**  JAVAROOTFOLDER (E.G. C:\Program Files\Java\jdk1.8.0_162)
+| Variable Name | Variable Value |
+| --- | --- |
+| JAVA_HOME | JAVAROOTFOLDER (E.G. C:\Program Files\Java\jdk1.8.0_162) |
 
 Miscellaneous Considerations
 ------
