@@ -114,7 +114,7 @@ Kibana Installation
 | Server.port: | Port to listen on, Default is 5601 |
 | Server.host: | Server hostname |
 | Server.name: | Server hostname |
-| Elasticsearch.url: | http&#58;http://SERVERHOSTNAME:IP |
+| Elasticsearch.url: | http&#58;//SERVERHOSTNAME:IP |
 | Logging.dest: | Filen and path for logging.  Folder structure must already exist, file will be created, preserve double quotes around value |
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana. In the following steps, root refers to the location that NSSM has been extracted to.
@@ -130,13 +130,14 @@ Root\win64\nssm.exe install Kibana
 8.  On the Details tab, set the following
 
 | Setting | Value |
+| :--- | :--- |
 | Display Name: | Kibana |
 | (Optional) Description: | Kibana VER (I.E. Kibana 6.2.2) |
 | Startup Type: | Automatic |
 9.  Select Install Service and click OK to finish.
 10. In the administrative CMD prompt enter the following to start the Kibana service.
 Powershell -c Start-Service Kibana
-11. After a few moments, you can verify Kibana’s functionality by opening a browser and pointing it to http://hostname:port as configured in Kibana.yml’s server.host and server.port properties.
+11. After a few moments, you can verify Kibana’s functionality by opening a browser and pointing it to http&#58;//hostname:port as configured in Kibana.yml’s server.host and server.port properties.
  
 
 Logstash Installation
@@ -247,6 +248,6 @@ Kibana provides the ability to format fields in a variety of ways.  In particula
 | :--- | :--- |
 | Format: | URL |
 | Type: | Link |
-| URL Template: | http&#58;https://dig.whois.com.au/whois/{{value}} |
+| URL Template: | `https://dig.whois.com.au/whois/{{value}}` |
 | Label Template: | {{value}} |
-*   In addition, you can also use http&#58;https://www.google.com/maps/place/{{value}} on many of the geographic fields, including the coordinates keyword field to link to Google Maps.
+*   In addition, you can also use `https://www.google.com/maps/place/{{value}}` on many of the geographic fields, including the coordinates keyword field to link to Google Maps.
