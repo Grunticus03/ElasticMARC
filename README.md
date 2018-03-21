@@ -6,7 +6,7 @@ ElasticMARC is a solution developed using Elastic's [Elastic Stack](https://www.
 Required Software
 ------
 •	[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)<br/>
-•	[Logstash](https://www.elastic.co/downloads/logstash)
+•	[Logstash](https://www.elastic.co/downloads/logstash)<br/>
 •	[Kibana](https://www.elastic.co/downloads/kibana)<br/>
 •	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)<br/>
 •	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)<br/>
