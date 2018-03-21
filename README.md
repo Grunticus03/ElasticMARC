@@ -90,9 +90,9 @@ Elasticsearch Installation
 6.	Open an administrative CMD window and enter the following commands: <br/>
 Root\bin\elasticsearch-service.bat install<br/>
 Root\bin\elasticsearch-service.bat manager<br/>
-7.  In the window that appears, modify the following:
-**(Optional) Display Name:** I prefer to remove the version information.
-**Startup Type:**  Automatic
+7.  In the window that appears, modify the following:<br/>
+**(Optional) Display Name:** I prefer to remove the version information.<br/>
+**Startup Type:**  Automatic<br/>
 8.  Select apply, start the service, and close the service manager window.
 
 ***Elasticsearch installation is now complete!***
