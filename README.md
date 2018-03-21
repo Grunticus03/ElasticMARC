@@ -110,6 +110,7 @@ Root\bin\elasticsearch-service.bat manager<br/>
 8.  Select apply, start the service, and close the service manager window.
 <br/>
 ***Elasticsearch installation is now complete!***
+
 <br/>
 
 Kibana Installation
