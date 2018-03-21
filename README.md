@@ -10,9 +10,13 @@ Required Software
 •	[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)
 
 •	[Logstash](https://www.elastic.co/downloads/logstash)
+
 •	[Kibana](https://www.elastic.co/downloads/kibana)
+
 •	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
 •	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)
+
 •	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)
 
 
