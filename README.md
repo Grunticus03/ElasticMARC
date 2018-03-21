@@ -5,18 +5,12 @@ ElasticMARC is a solution developed using Elastic's [Elastic Stack](https://www.
 
 Required Software
 ------
-•	[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)
-
+•	[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)<br/>
 •	[Logstash](https://www.elastic.co/downloads/logstash)
-
-•	[Kibana](https://www.elastic.co/downloads/kibana)
-
-•	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-
-•	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)
-
-•	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)
-
+•	[Kibana](https://www.elastic.co/downloads/kibana)<br/>
+•	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)<br/>
+•	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)<br/>
+•	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)<br/>
 
 Pre-requisites
 ------
@@ -93,9 +87,9 @@ Elasticsearch Installation
 | -Xms1g | Initial RAM Elasticsearch JVM will use. |
 | -Xmx1g | Max RAM Elasticsearch JVM will use. |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
-6.	Open an administrative CMD window and enter the following commands:
-Root\bin\elasticsearch-service.bat install
-Root\bin\elasticsearch-service.bat manager
+6.	Open an administrative CMD window and enter the following commands: <br/>
+Root\bin\elasticsearch-service.bat install<br/>
+Root\bin\elasticsearch-service.bat manager<br/>
 7.  In the window that appears, modify the following:
 **(Optional) Display Name:** I prefer to remove the version information.
 **Startup Type:**  Automatic
