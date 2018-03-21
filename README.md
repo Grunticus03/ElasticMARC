@@ -11,7 +11,8 @@ Required Software
 •	[Java JDK 8u162](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)<br/>
 •	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)<br/>
 •	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)<br/>
-
+<br/>
+<br/>
 Pre-requisites
 ------
 Prior to installing the Elastic Stack, the following modifications are required.
@@ -35,7 +36,8 @@ The Elastic Stack relies on Java.  Ensure that you install the JDK, not JRE.  Ve
 | Variable Name | Variable Value |
 | :--- | :--- |
 | JAVA_HOME | JAVAROOTFOLDER (E.G. C:\Program Files\Java\jdk1.8.0_162) |
-
+<br/>
+<br/>
 Miscellaneous Considerations
 ------
 ### Hardware Requirements
@@ -64,8 +66,8 @@ The Elastic Stack applications do not have an installation process or executable
 
 ### Recommended Editor
 It is highly recommended that you use a text editor like Notepad++ to maintain proper encoding of the configuration files.  It also generally just makes for a friendlier method of working with configuration files.
-
-
+<br/>
+<br/>
 Elasticsearch Installation
 ------
 1.   Decompress Elasticsearch to your intended installation location.
@@ -80,6 +82,8 @@ Elasticsearch Installation
 | http.port: | Port Elasticsearch will listen on, 9200 is used by default. |
 | (Optional) path.data: | Where Elasticsearch will store indexed data.  Default: root\data.|
 | (Optional) path.logs: | Where Elasticsearch will store logs.  Default: root\logs. |
+<br/>
+<br/>
 5.  Open root\config\jvm.options and modify the following, if necessary:
 
 | Setting | Value |
@@ -87,6 +91,7 @@ Elasticsearch Installation
 | -Xms1g | Initial RAM Elasticsearch JVM will use. |
 | -Xmx1g | Max RAM Elasticsearch JVM will use. |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
+<br/>
 6.	Open an administrative CMD window and enter the following commands: <br/>
 Root\bin\elasticsearch-service.bat install<br/>
 Root\bin\elasticsearch-service.bat manager<br/>
@@ -96,10 +101,11 @@ Root\bin\elasticsearch-service.bat manager<br/>
 | :--- | :--- |
 | (Optional) Display Name: | I prefer to remove the version information |
 | Startup Type: | Automatic |
+<br/>
 8.  Select apply, start the service, and close the service manager window.
-
 ***Elasticsearch installation is now complete!***
-
+<br/>
+<br/>
 Kibana Installation
 ------
 1.  Decompress Kibana to your intended installation location.
@@ -115,6 +121,7 @@ Kibana Installation
 | Logging.dest: | File and path for logging.  Folder must exist, file will be created, preserve double quotes |
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana. In the following steps, root refers to the location that NSSM has been extracted to.
+<br/>
 5.  Decompress NSSM to your intended installation location.
 6.  Open an administrative CMD prompt and enter the following command:
 Root\win64\nssm.exe install Kibana
@@ -124,6 +131,8 @@ Root\win64\nssm.exe install Kibana
 | :--- | :--- |
 | Path: | Root\bin\kibana.bat |
 | Startup Directory: | root\bin |
+<br/>
+<br/>
 8.  On the Details tab, set the following
 
 | Setting | Value |
@@ -131,6 +140,8 @@ Root\win64\nssm.exe install Kibana
 | Display Name: | Kibana |
 | (Optional) Description: | Kibana VER (I.E. Kibana 6.2.2) |
 | Startup Type: | Automatic |
+<br/>
+<br/>
 9.  Select Install Service and click OK to finish.
 10. In the administrative CMD prompt enter the following to start the Kibana service.
 Powershell -c Start-Service Kibana
@@ -150,6 +161,8 @@ Logstash Installation
 | http.host: | IPv4 Address of Logstash server |
 | http.port: | Port to listen on |
 | (Optional) Log.level: | Uncomment and set to desired level. Trace is most detailed but very chatty.  Debug is usually sufficient for troubleshooting |
+<br/>
+<br/>
 5.  Open root\config\jvm.options and modify the following:
 
 | Setting | Value |
@@ -157,12 +170,16 @@ Logstash Installation
 | -Xms1g | Initial RAM used by Logstash JVM |
 | -Xmx1g | Max RAM used by Logstash JVM |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Logstash JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
+<br/>
+<br/>
 6.  Open root\config\pipelines.yml and modify the following:
 
 | Setting | Value |
 | :--- | :--- |
 | Path.config: | /root/config/pipelines/dmarcpipeline.yml. Do not use a drive letter, use forward slashes, preserve double quotes |
 *   (Optional) If you’d like to implement Beats data ingesting, you can uncomment the second set of pipeline values that are pre-configured for this purpose.
+<br/>
+<br/>
 7.  Open root\config\pipelines\dmarcpipeline.yml and modify the following:
 
 | Setting | Value |
@@ -171,6 +188,8 @@ Logstash Installation
 | Line 4 path => | Folder Logstash monitors for files to ingest. Use forward slashes, preserve double quotes, use *.xml after folder path |
 | Line 95 hosts => | ServerName:Port Logstash sends data to once it’s been processed. Preserve brackets and double quotes |
 | Line 98 template => | Location of Elasticsearch template, use drive letter, forward slashes in path, preserve quotes |
+<br/>
+<br/>
 8.  (Optional) If implementing Beats, open root\config\pipelines\beatspipeline.yml and modify the following:
 
 | Setting | Value |
@@ -185,6 +204,8 @@ Root\win64\nssm.exe install Logstash
 | :--- | :--- |
 | Path: | root\bin\logstash.bat |
 | Startup Directory: | root\bin |
+<br/>
+<br/>
 11.  On the Details tab, enter the following:
 
 | Setting | Value |
@@ -192,6 +213,8 @@ Root\win64\nssm.exe install Logstash
 | Display Name: | Logstash |
 | (Optional) Description: | Logstash VER (I.E. Logstash 6.2.2) |
 | Startup Type: | Automatic |
+<br/>
+<br/>
 12. Select, Install Service and click OK to finish.
 13. In the administrative CMD prompt enter the following to start the Logstash service.<br/>
 Powershell -c Start-Service Logstash<br/><br/>
