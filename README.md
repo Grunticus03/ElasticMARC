@@ -59,8 +59,8 @@ When creating an Index, you have three options for the Time Filter field.  The d
 | Field | Purpose |
 | :--- | :--- |
 | @timestamp | This will tag each event with the date and time that it was processed by Logstash. |
-| Report.start | This is the starting time for the reporting period as reported by the aggregate generator (remote MTA server). |
-| Report.end | This is the ending time for the reporting period as reported by the aggregate generator (remote MTA server). |
+| Report.start | Start time for the reporting period defined in each XML |
+| Report.end | End time for the reporting period defined in each XML |
 
 ### Persistent Queue
 As of this writing, there is a [known issue](https://github.com/elastic/logstash/issues/9167) using disk buffering (persisted queue) with this configuration on Elastic Stack 6.1.1 – 6.2.2.  Previous versions may also be affected, please do not use disk buffering until further notice.  If you have a pre-existing Elastic Stack and are using persisted queue, using the multipipeline configuration (as configured in this implementation), will allow you to specify per pipeline queueing settings.
@@ -82,16 +82,16 @@ Elasticsearch Installation
 | Setting | Value |
 | :--- | :--- |
 | Node.name: | HostnameOfComputer
-| Network.host: | This is the IPv4 address of the host Elasticsearch will listen on, use 0.0.0.0 to listen on all available addresses. |
-| http.port: | This is the port number Elasticsearch will listen on, 9200 is used by default. |
-| (Optional) path.data: | Where Elasticsearch will store indexed data.  By default, this is root\data.|
-| (Optional) path.logs: | Where Elasticsearch will store logs.  By default, this is root\logs. |
+| Network.host: | IPv4 address Elasticsearch will listen on, use 0.0.0.0 to listen on all addresses. |
+| http.port: | Port Elasticsearch will listen on, 9200 is used by default. |
+| (Optional) path.data: | Where Elasticsearch will store indexed data.  Default: root\data.|
+| (Optional) path.logs: | Where Elasticsearch will store logs.  Default: root\logs. |
 5.  Open root\config\jvm.options and modify the following, if necessary:
 
 | Setting | Value |
 | :--- | :--- |
-| -Xms1g | This determines the initial amount of RAM consumed by the Elasticsearch JVM. |
-| -Xmx1g | This determines the max amount of RAM consumed by the Elasticsearch JVM. |
+| -Xms1g | Initial RAM Elasticsearch JVM will use. |
+| -Xmx1g | Max RAM Elasticsearch JVM will use. |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 6.	Open an administrative CMD window and enter the following commands:
 Root\bin\elasticsearch-service.bat install
@@ -108,23 +108,31 @@ Kibana Installation
 1.  Decompress Kibana to your intended installation location.
 2.  Copy the contents of ElasticMARC\kibana to the Kibana directory, overwriting any existing files.
 3.  Open root\config\kibana.yml and modify the following:
-**Server.port:** This is the port the server will listen for requests on.  Default is 5601
-**Server.host:** Set to server’s hostname.
-**Server.name:** Set to server’s hostname.
-**Elasticsearch.url:** Set to server’s hostname with http:// at the beginning and the port elasticsearch is configured to listen on, 9200 is default.
-**Logging.dest:** Filename and path for logging.  Folder structure must already exist, file will be created.  Preserve double quotes around value.
+
+| Setting | Value |
+| :--- | :--- |
+| Server.port: | Port to listen on, Default is 5601 |
+| Server.host: | Server hostname |
+| Server.name: | Server hostname |
+| Elasticsearch.url: | http://SERVERHOSTNAME:IP |
+| Logging.dest: | Filen and path for logging.  Folder structure must already exist, file will be created, preserve double quotes around value |
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana. In the following steps, root refers to the location that NSSM has been extracted to.
 5.  Decompress NSSM to your intended installation location.
 6.  Open an administrative CMD prompt and enter the following command:
 Root\win64\nssm.exe install Kibana
 7.  On the Application tab, set the following:
-**Path:**  Root\bin\kibana.bat
-**Startup Directory:** root\bin
+
+| Setting | Value |
+| :--- | :--- |
+| Path: | Root\bin\kibana.bat |
+| Startup Directory: | root\bin |
 8.  On the Details tab, set the following
-**Display Name:**  Kibana
-**(Optional) Description:** Kibana VER (I.E. Kibana 6.2.2)
-**Startup Type:**  Automatic
+
+| Setting | Value |
+| Display Name: | Kibana |
+| (Optional) Description: | Kibana VER (I.E. Kibana 6.2.2) |
+| Startup Type: | Automatic |
 9.  Select Install Service and click OK to finish.
 10. In the administrative CMD prompt enter the following to start the Kibana service.
 Powershell -c Start-Service Kibana
@@ -137,34 +145,55 @@ Logstash Installation
 2.  Copy the contents of ElasticMARC\logstashto the logstash directory, overwriting any existing files.
 3.  Create a folder that will be the ingest point for the DMARC Aggregate reports.
 4.  Open root\config\logastash.yml and modify the following:
-**Node.name:** Set to hostname of server.
-**http.host:** Set to IPv4 Address of Logstash server.  This is for the REST API.
-**http.port:**  Set to port for REST API to listen on.  Default is 9600.
-**(Optional) Log.level:**  Uncomment and set to desired level. Trace is most detailed but very chatty.  Debug is usually sufficient for troubleshooting.
+
+| Setting | Value |
+| :--- | :--- |
+| Node.name: | Server hostname |
+| http.host: | IPv4 Address of Logstash server |
+| http.port: | Port to listen on |
+| (Optional) Log.level: | Uncomment and set to desired level. Trace is most detailed but very chatty.  Debug is usually sufficient for troubleshooting |
 5.  Open root\config\jvm.options and modify the following:
-**-Xms1g** – This determines the initial amount of RAM consumed by the Logstash JVM.
-**-Xmx1g** - This determines the max amount of RAM consumed by the Logstash JVM.
+
+| Setting | Value |
+| :--- | :--- |
+| -Xms1g | Initial RAM used by Logstash JVM |
+| -Xmx1g | Max RAM used by Logstash JVM |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Logstash JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 6.  Open root\config\pipelines.yml and modify the following:
-**Path.config:** Set this to the location of /root/config/pipelines/dmarcpipeline.yml. Do not use a drive letter, use forward slashes in path, and preserve double quotes around the path.
-*   (Optional) If you’d like to implement Beats data ingesting, you can uncomment the second set of pipeline values that are preconfigured for this purpose.
+
+| Setting | Value |
+| :--- | :--- |
+| Path.config: | /root/config/pipelines/dmarcpipeline.yml. Do not use a drive letter, use forward slashes, preserve double quotes |
+*   (Optional) If you’d like to implement Beats data ingesting, you can uncomment the second set of pipeline values that are pre-configured for this purpose.
 7.  Open root\config\pipelines\dmarcpipeline.yml and modify the following:
-**Line 3 id =>** This is a cosmetic tag assigned to this portion of the ingest pipeline.  I recommend setting it to the folder you will be ingesting the DMARC XML files. Preserve double quotes around value. This is visible in the Pipeline Monitor if you configure the X-Pack plugin
-**Line 4 path =>** This is the folder that Logstash will monitor for files to ingest. Use forward slashes in path, preserve double quotes around value, ensure you set to *.xml after the folder path.
-**Line 95 hosts =>** This is the servername:port that Logstash will send the data to once it’s been processed.  Preserve the brackets and double quotes around the value.
-**Line 98 template =>** This is the location of the Elasticsearch template that is used to configure the fields for each event.  Use drive letter, use forward slashes in path, and preserve quotes around value.
+
+| Setting | Value |
+| :--- | :--- |
+| Line 3 id => | Cosmetic tag assigned to input of pipeline. Set to folder ingesting the XML files, preserve double quotes |
+| Line 4 path => | Folder Logstash monitors for files to ingest. Use forward slashes, preserve double quotes, use *.xml after folder path |
+| Line 95 hosts => | ServerName:Port Logstash sends data to once it’s been processed. Preserve brackets and double quotes |
+| Line 98 template => | Location of Elasticsearch template, use drive letter, forward slashes in path, preserve quotes |
 8.  (Optional) If implementing Beats, open root\config\pipelines\beatspipeline.yml and modify the following:
-**Line 12 hosts =>** This is the servername:port that Logstash will send the data to once it’s been processed.  Preserve the brackets and double quotes around the value.
+
+| Setting | Value |
+| :--- | :--- |
+| Line 12 hosts => | ServerName:Port Logstash sends data to once it’s been processed. Preserve brackets and double quotes |
 *   Logstash does not have a service installer, we will utilize NSSM to create a service for Logstash. In the following steps, root refers to the location that NSSM has been extracted to.
 9.  Open an administrative CMD prompt and enter the following command:
 Root\win64\nssm.exe install Logstash
 10. On the Application tab, enter the following:
-**Path:**  root\bin\logstash.bat
-**Startup Directory:** root\bin
+
+| Setting | Value |
+| :--- | :--- |
+| Path: | root\bin\logstash.bat |
+| Startup Directory: | root\bin |
 11.  On the Details tab, enter the following:
-**Display Name:**  Logstash
-**(Optional) Description:** Logstash VER (I.E. Logstash 6.2.2)
-**Startup Type:** Automatic
+
+| Setting | Value |
+| :--- | :--- |
+| Display Name: | Logstash |
+| (Optional) Description: | Logstash VER (I.E. Logstash 6.2.2) |
+| Startup Type: | Automatic |
 12. Select, Install Service and click OK to finish.
 13. In the administrative CMD prompt enter the following to start the Logstash service.
 Powershell -c Start-Service Logstash
@@ -213,8 +242,11 @@ Kibana provides the ability to format fields in a variety of ways.  In particula
 2.	Select Management on the left side, then Index Patterns.
 3.	Locate the auth_result.spf_domain field and click the pencil icon in the controls column.
 4.	Use the following values:
-**Format:** URL
-**Type:** Link
-**URL Template:** https://dig.whois.com.au/whois/{{value}}
-**Label Template:** {{value}}
+
+| Setting | Value |
+| :--- | :--- |
+| Format: | URL |
+| Type: | Link |
+| URL Template: | https://dig.whois.com.au/whois/{{value}} |
+| Label Template: | {{value}} |
 *   In addition, you can also use https://www.google.com/maps/place/{{value}} on many of the geographic fields, including the coordinates keyword field to link to Google Maps.
