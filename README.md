@@ -16,8 +16,9 @@ Required Software
 •	[Non-Sucking Service Manager (NSSM)](https://nssm.cc/download)
 
 •	[Notepad++ (Optional)](https://notepad-plus-plus.org/download/v7.5.6.html)
+
 <br/>
-<br/>
+
 Pre-requisites
 ------
 Prior to installing the Elastic Stack, the following modifications are required.
@@ -41,8 +42,7 @@ The Elastic Stack relies on Java.  Ensure that you install the JDK, not JRE.  Ve
 | Variable Name | Variable Value |
 | :--- | :--- |
 | JAVA_HOME | JAVAROOTFOLDER (E.G. C:\Program Files\Java\jdk1.8.0_162) |
-<br/>
-<br/>
+
 Miscellaneous Considerations
 ------
 ### Hardware Requirements
@@ -52,7 +52,7 @@ For the purposes of this implementation; one CPU and 6 GB RAM should be sufficie
 For simplicity and consistency, when referring to the installation location of an application, root shall imply drive letter and path to the application.  For example, D:\Elastic Stack\Elasticsearch\bin will be root\bin.
 
 ### Example Configurations
-I have included prebuilt example configuration files for each Elastic Stack application.  These files require minimal modifications and are intended to get you up and running on a basic Elastic Stack implementation.
+Prebuilt example configuration files are included for each Elastic Stack application.  These files require minimal modifications and are intended to get you up and running on a basic Elastic Stack implementation.
 
 ### Time Stamping
 When creating an Index, you have three options for the Time Filter field.  The decision on which field to use is dependent on your organization’s desires.  Be aware, once you’ve selected a field, you cannot change it without first recreating the index and then removing all previously indexed data.
@@ -72,7 +72,7 @@ The Elastic Stack applications do not have an installation process or executable
 ### Recommended Editor
 It is highly recommended that you use a text editor like Notepad++ to maintain proper encoding of the configuration files.  It also generally just makes for a friendlier method of working with configuration files.
 <br/>
-<br/>
+
 Elasticsearch Installation
 ------
 1.   Decompress Elasticsearch to your intended installation location.
@@ -110,7 +110,7 @@ Root\bin\elasticsearch-service.bat manager<br/>
 8.  Select apply, start the service, and close the service manager window.
 ***Elasticsearch installation is now complete!***
 <br/>
-<br/>
+
 Kibana Installation
 ------
 1.  Decompress Kibana to your intended installation location.
@@ -151,7 +151,7 @@ Root\win64\nssm.exe install Kibana
 10. In the administrative CMD prompt enter the following to start the Kibana service.
 Powershell -c Start-Service Kibana
 11. After a few moments, you can verify Kibana’s functionality by opening a browser and pointing it to http&#58;//hostname:port as configured in Kibana.yml’s server.host and server.port properties.
- 
+ <br/>
 
 Logstash Installation
 ------
@@ -224,6 +224,7 @@ Root\win64\nssm.exe install Logstash
 13. In the administrative CMD prompt enter the following to start the Logstash service.<br/>
 Powershell -c Start-Service Logstash<br/><br/>
 ***Logstash installation is now complete!***
+<br/>
 
 Configuring Kibana
 ------
