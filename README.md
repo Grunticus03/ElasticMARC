@@ -2,7 +2,6 @@
 
 ElasticMARC is a solution developed using Elastic's [Elastic Stack](https://www.elastic.co/products) to ingest, enrich, and visualize DMARC aggregate report data.  The primary focus of ElasticMARC is to provide a simple, guided setup utilizing a Windows platform.  While Linux platforms can utilize most of this setup, a PowerShell script is used to modify the XML reports prior to being ingested by Elastic Stack.
 
-# Configuring Windows Elastic Stack for DMARC Analysis
 
 Required Software
 ------
@@ -40,7 +39,7 @@ The Elastic Stack relies on Java.  Ensure that you install the JDK, not JRE.  Ve
 4.	In the window that appears, in the System Variables section, select New…
 
 | Variable Name | Variable Value |
-| --- | --- |
+| :--- | :--- |
 | JAVA_HOME | JAVAROOTFOLDER (E.G. C:\Program Files\Java\jdk1.8.0_162) |
 
 Miscellaneous Considerations
@@ -56,9 +55,12 @@ I have included prebuilt example configuration files for each Elastic Stack appl
 
 ### Time Stamping
 When creating an Index, you have three options for the Time Filter field.  The decision on which field to use is dependent on your organization’s desires.  Be aware, once you’ve selected a field, you cannot change it without first recreating the index and then removing all previously indexed data.
-**@timestamp** – This will tag each event with the date and time that it was processed by Logstash.
-**Report.start** – This is the starting time for the reporting period as reported by the aggregate generator (remote MTA server).
-**Report.end** – This is the ending time for the reporting period as reported by the aggregate generator (remote MTA server).
+
+| Field | Purpose |
+| :--- | :--- |
+| @timestamp | This will tag each event with the date and time that it was processed by Logstash. |
+| Report.start | This is the starting time for the reporting period as reported by the aggregate generator (remote MTA server). |
+| Report.end | This is the ending time for the reporting period as reported by the aggregate generator (remote MTA server). |
 
 ### Persistent Queue
 As of this writing, there is a [known issue](https://github.com/elastic/logstash/issues/9167) using disk buffering (persisted queue) with this configuration on Elastic Stack 6.1.1 – 6.2.2.  Previous versions may also be affected, please do not use disk buffering until further notice.  If you have a pre-existing Elastic Stack and are using persisted queue, using the multipipeline configuration (as configured in this implementation), will allow you to specify per pipeline queueing settings.
@@ -76,14 +78,20 @@ Elasticsearch Installation
 2.   Download and Decompress ElasticMARC to a temporary location
 3.	Copy the contents of ElasticMARC\elasticsearch to the Elasticsearch directory, overwriting any existing files.
 4.	Open root\config\elasticsearch.yml and modify the following:
-**Node.name:** HostnameOfComputer
-**Network.host:** This is the IPv4 address of the host Elasticsearch will listen on, use 0.0.0.0 to listen on all available addresses.
-**http.port:**  This is the port number Elasticsearch will listen on, 9200 is used by default.
-**(Optional) path.data:**  Where Elasticsearch will store indexed data.  By default, this is root\data.
-**(Optional) path.logs:**  Where Elasticsearch will store logs.  By default, this is root\logs.
+
+| Setting | Value |
+| :--- | :--- |
+| Node.name: | HostnameOfComputer
+| Network.host: | This is the IPv4 address of the host Elasticsearch will listen on, use 0.0.0.0 to listen on all available addresses. |
+| http.port: | This is the port number Elasticsearch will listen on, 9200 is used by default. |
+| (Optional) path.data: | Where Elasticsearch will store indexed data.  By default, this is root\data.|
+| (Optional) path.logs: | Where Elasticsearch will store logs.  By default, this is root\logs. |
 5.  Open root\config\jvm.options and modify the following, if necessary:
-**-Xms1g** – This determines the initial amount of RAM consumed by the Elasticsearch JVM.
-**-Xmx1g** - This determines the max amount of RAM consumed by the Elasticsearch JVM.
+
+| Setting | Value |
+| :--- | :--- |
+| -Xms1g | This determines the initial amount of RAM consumed by the Elasticsearch JVM. |
+| -Xmx1g | This determines the max amount of RAM consumed by the Elasticsearch JVM. |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 6.	Open an administrative CMD window and enter the following commands:
 Root\bin\elasticsearch-service.bat install
