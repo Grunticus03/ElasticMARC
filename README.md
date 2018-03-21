@@ -114,7 +114,7 @@ Kibana Installation
 | Server.port: | Port to listen on, Default is 5601 |
 | Server.host: | Server hostname |
 | Server.name: | Server hostname |
-| Elasticsearch.url: | http://SERVERHOSTNAME:IP |
+| Elasticsearch.url: | http&#58;http://SERVERHOSTNAME:IP |
 | Logging.dest: | Filen and path for logging.  Folder structure must already exist, file will be created, preserve double quotes around value |
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana. In the following steps, root refers to the location that NSSM has been extracted to.
@@ -247,6 +247,6 @@ Kibana provides the ability to format fields in a variety of ways.  In particula
 | :--- | :--- |
 | Format: | URL |
 | Type: | Link |
-| URL Template: | https://dig.whois.com.au/whois/{{value}} |
+| URL Template: | http&#58;https://dig.whois.com.au/whois/{{value}} |
 | Label Template: | {{value}} |
-*   In addition, you can also use https://www.google.com/maps/place/{{value}} on many of the geographic fields, including the coordinates keyword field to link to Google Maps.
+*   In addition, you can also use http&#58;https://www.google.com/maps/place/{{value}} on many of the geographic fields, including the coordinates keyword field to link to Google Maps.
