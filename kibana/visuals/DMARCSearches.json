@@ -44,5 +44,30 @@
         "searchSourceJSON": "{\"index\":\"dmarcxml-*\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[]}"
       }
     }
+  },
+  {
+    "_id": "7ff146f0-65a8-11e8-8e18-21bbcec4a3b8",
+    "_type": "search",
+    "_source": {
+      "title": "DMARC - SPF Results",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "email.source_ip",
+        "email.count",
+        "email.header_from",
+        "authresult.spf_domain",
+        "email.spf_evaluation",
+        "report.org"
+      ],
+      "sort": [
+        "report.start",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"dmarcxml-*\",\"highlightAll\":true,\"version\":true,\"query\":{\"query\":\"\",\"language\":\"lucene\"},\"filter\":[]}"
+      }
+    }
   }
 ]
