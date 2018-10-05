@@ -1,3 +1,13 @@
+#Email address to retrieve aggregate reports from, user running process must have Full Access rights to mailbox.
+$MailboxName = Read-Host "E-mail address of aggregate mailbox"
+#FQDN to a CAS server, CAS array URL works.
+$urireq = Read-Host "Enter FQDN to CAS(https://mail.example.com)"
+$downloadDirectory = Read-Host "Path to save attachments to"
+$outfile = Read-Host "Path to save extracted files"
+$Ingest = Read-Host "Path to save modified XML reports"
+$FolderDest = Read-Host "Name of mailbox folder to move message to (must exist)"
+$Cleanup = Read-Host "Cleanup attachments and unmodified reports? (y|n)"
+Clear-Host
 ###########Download messages from mailbox###########
 #Accept any certificates presented by the CAS
 
@@ -24,12 +34,13 @@ $TASource=@'
 '@
 $TAResults=$Provider.CompileAssemblyFromSource($Params,$TASource)
 $TAAssembly=$TAResults.CompiledAssembly
+
 #We now create an instance of the TrustAll and attach it to the ServicePointManager
 $TrustAll=$TAAssembly.CreateInstance("Local.ToolkitExtensions.Net.CertificatePolicy.TrustAll")
 [System.Net.ServicePointManager]::CertificatePolicy=$TrustAll
+
 #Load the EWS API and connect to the CAS/EWS
 #EWS API is found at: https://www.microsoft.com/en-us/download/details.aspx?id=42951
-
 #Load Managed API dll
 if ((Test-Path "C:\Program Files\Microsoft\Exchange\Web Services\2.2\Microsoft.Exchange.WebServices.dll") -eq $true) {
   $API22 = $true
@@ -64,19 +75,18 @@ $service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService($Excha
 
 #Set the URL of the CAS (Client Access Server) to use three options are available to use Autodiscover to find the CAS URL, Hardcode the CAS to use, or
 #prompt user for FQDN.
-
-$MailboxName = Read-Host "E-mail address of aggregate mailbox"
+#Specify mailbox to connect to - Moved to line 1
 
 #CAS URL Option 1 Autodiscover
 #$service.AutodiscoverUrl($MailboxName,{$true})
 #"Using CAS Server : " + $Service.url
 
 #CAS URL Option 2 Hardcoded
-#$uri=[system.URI] "https://FQDN/ews/Exchange.asmx"
+#$uri=[system.URI] "https://owa.stlouisco.com/ews/Exchange.asmx"
 #$service.Url = $uri
 
 #CAS URL Option 3 User Prompt
-$urireq = Read-Host "Enter FQDN to CAS(https://mail.example.com)"
+#Moved to line 2
 $uri = [System.URI] "$urireq/ews/Exchange.asmx"
 $service.Url = $uri
 
@@ -87,7 +97,7 @@ $Inbox = [Microsoft.Exchange.WebServices.Data.Folder]::Bind($service,$folderid)
 
 #Find attachments and copy them to the download directory
 $ivItemView = New-Object Microsoft.Exchange.WebServices.Data.ItemView(200)
-$downloadDirectory = Read-Host "Path to save attachments to"
+#Moved to line 3
 if ((Test-Path $downloadDirectory) -eq $false) {
   New-Item -ItemType Directory -Force -Path $downloadDirectory | Out-Null
 }
@@ -105,9 +115,8 @@ foreach($miMailItems in $findItemsResults.Items){
 }
 
 #This section moves emails from the Inbox to a subfolder of "Inbox" called "Review Completed", make sure to create the folder.
-
 #Get the ID of the folder to move to
-$FolderDest = Read-Host "Name of folder in mailbox to move message to (must exist)"
+#Moved to line 4
 $fvFolderView =  New-Object Microsoft.Exchange.WebServices.Data.FolderView(100)
 $fvFolderView.Traversal = [Microsoft.Exchange.WebServices.Data.FolderTraversal]::Shallow;
 $SfSearchFilter = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.FolderSchema]::DisplayName,"$FolderDest")
@@ -157,7 +166,7 @@ Function DeGZip-File{
 }
 $degz = Get-ChildItem $downloadDirectory | Where-Object {$_.name -match ".*\.gz$"}
 $dezip = Get-ChildItem $downloadDirectory | Where-Object {$_.name -match ".*\.zip$"}
-$outfile = Read-Host "Path to store decompressed files"
+#Moved to line 5
 if ((Test-Path $outfile) -eq $false) {
   New-Item -ItemType Directory -Force -Path $outfile | Out-Null
 }
@@ -175,7 +184,7 @@ foreach ($infile in $dezip) {
 
 
 ###########Modify XML Files###########
-$Ingest = Read-Host "Save modified files to"
+#Moved to line 6
 if ((Test-Path $Ingest) -eq $false) {
   New-Item -ItemType Directory -Force -Path $Ingest | Out-Null
 }
@@ -199,18 +208,20 @@ foreach ($xmlfile in $xmlrepo) {
   $xmlprogress++
   Write-Progress -activity "Modifying XML Structures" -status "Modified: $xmlprogress of $($xmlrepo.Count)"
 }
-
+Clear-Host
+Write-Host "Modification process complete!"
+Start-Sleep -Seconds 3
 
 ###########File Cleanup###########
-$Cleanup = Read-Host "Remove downloads and compressed files? (y|n)"
+#Moved to line 7
 if ($cleanup -eq "y") {
     #Remove downloaded email attachments
     Get-ChildItem $downloadDirectory | Where-Object {$_.name -match ".*\.gz$|.*\.zip$"} | Remove-Item -Force -Confirm:$false
     $dlc = Get-ChildItem $downloadDirectory
-    if ($dlc.count -eq 1) {
+    if ($dlc.count -lt 1) {
         Remove-Item $downloadDirectory
     }
-    #Remove decompressed XML files
+    #Remove decompressed, unmodified XML files
     Get-ChildItem $outfile | Where-Object {$_.name -match ".*\.xml$"} | Remove-Item -Force -Confirm:$false
     $dcx = Get-ChildItem $outfile
     if ($dcx.count -lt 1) {
@@ -220,7 +231,7 @@ if ($cleanup -eq "y") {
 if ($cleanup -eq "n") {
 exit
 }
-    #Remove modified XML files
+#Remove modified XML files
 $Cleanup = Read-Host "Remove modified files? (y|n)"
 if ($cleanup -eq "y") {
     Get-ChildItem $ingest | Where-Object {$_.name -match ".*\.xml$"} | Remove-Item -Force -Confirm:$false
@@ -229,3 +240,6 @@ if ($cleanup -eq "y") {
         Remove-Item $ingest
     }
 }
+Clear-Host
+Write-Host "Cleanup process complete!"
+Start-Sleep -Seconds 3
