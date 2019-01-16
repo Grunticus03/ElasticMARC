@@ -1,10 +1,10 @@
 input {
   file {
-    id => "Ingest\DMARC\*.xml"
-    path => "D:/ElasticStack/Ingest/DMARC/*.xml"
+    id => "Ingest_DMARC"
+    path => ["/Ingest/DMARC/*"]
     discover_interval => 5
+    mode => "read"
     codec => multiline {
-      auto_flush_interval => 5
       negate => true
       pattern => "<record>"
       what => "previous"
@@ -16,18 +16,19 @@ filter {
   xml {
     id => "Field Extraction"
     store_xml => false
+    force_array => false
     source => "message"
     xpath => [
       "record/report_metadata/org_name/text()", "report.org",
       "record/report_metadata/email/text()", "report.org_contact",
-      "record/report_metadata/extra_contact_info/text()", "report.org_contact_additional",
+      "record/report_metadata/extra_contact_info/text()", "report.additional_contact",
       "record/report_metadata/report_id/text()", "report.id",
       "record/report_metadata/date_range/begin/text()", "report.start",
       "record/report_metadata/date_range/end/text()", "report.end",
       "record/report_metadata/error/text()", "report.error",
       "record/policy_published/domain/text()", "policy.domain",
-      "record/policy_published/aspf/text()", "policy.spf_alignment",
-      "record/policy_published/adkim/text()", "policy.dkim_alignment",
+      "record/policy_published/aspf/text()", "policy.spf_mode",
+      "record/policy_published/adkim/text()", "policy.dkim_mode",
       "record/policy_published/p/text()", "policy.dmarc.domain_action",
       "record/policy_published/sp/text()", "policy.dmarc.subdomain_action",
       "record/policy_published/pct/text()", "policy.percentage",
@@ -42,13 +43,13 @@ filter {
       "record/identifiers/envelope_to/text()", "email.envelope_to",
       "record/identifiers/envelope_from/text()", "email.envelope_from",
       "record/identifiers/header_from/text()", "email.header_from",
-      "record/auth_results/dkim/domain/text()", "auth_result.dkim_domain",
-      "record/auth_results/dkim/selector/text()", "auth_result.dkim_selector",
-      "record/auth_results/dkim/result/text()", "auth_result.dkim_result",
-      "record/auth_results/dkim/human_result/text()", "auth_result.dkim_human_result",
-      "record/auth_results/spf/domain/text()", "auth_result.spf_domain",
-      "record/auth_results/spf/scope/text()", "auth_result.spf_scope",
-      "record/auth_results/spf/result/text()", "auth_result.spf_result"
+      "record/auth_results/dkim/domain/text()", "authresult.dkim_domain",
+      "record/auth_results/dkim/selector/text()", "authresult.dkim_selector",
+      "record/auth_results/dkim/result/text()", "authresult.dkim_result",
+      "record/auth_results/dkim/human_result/text()", "authresult.dkim_human_result",
+      "record/auth_results/spf/domain/text()", "authresult.spf_domain",
+      "record/auth_results/spf/scope/text()", "authresult.spf_scope",
+      "record/auth_results/spf/result/text()", "authresult.spf_result"
     ]
   }
   mutate {
@@ -63,14 +64,14 @@ filter {
       "email.spf_evaluation",
       "policy.dmarc.domain_action",
       "policy.dmarc.subdomain_action",
-      "policy.dkim_alignment",
-      "policy.spf_alignment"
+      "policy.dkim_mode",
+      "policy.spf_mode"
     ]
     gsub => [
-      "policy.dkim_alignment", "r", "Relaxed",
-      "policy.dkim_alignment", "s", "Strict",
-      "policy.spf_alignment", "r", "Relaxed",
-      "policy.spf_alignment", "s", "Strict",
+      "policy.dkim_mode", "r", "Relaxed",
+      "policy.dkim_mode", "s", "Strict",
+      "policy.spf_mode", "r", "Relaxed",
+      "policy.spf_mode", "s", "Strict",
       "policy.forensic_reporting", "0", "All Fail",
       "policy.forensic_reporting", "1", "Any Fail",
       "policy.forensic_reporting", "d", "DKIM Fail",
@@ -78,24 +79,36 @@ filter {
     ]
   }
   geoip {
-    id => "IP Geo-Mapping"
+    id => "IP Geo-mapping"
     source => "email.source_ip"
-    add_field => {
-      "[geoip][location][coordinates]" => "%{[geoip][location][lat]}, %{[geoip][location][lon]}"
-    }
-    remove_field => ["@version", "host"]
   }
-  if "_geoip_lookup_failure" in [tags] {
-    drop { }
+  if "_geoip_lookup_failure" not in [tags] {
+    mutate {
+      id => "Create coordinates field"
+      add_field => {
+        "[geoip][location][coordinates]" => "%{[geoip][location][lat]}, %{[geoip][location][lon]}"
+      }
+      remove_field => ["host"]
+    }
+  }
+  fingerprint {
+    id => "Duplicate Protection"
+    source => "message"
+    target => "[@metadata][fingerprint]"
+    method => "MURMUR3"
+  }
+  mutate {
+    add_field => {
+      "ingest_time" => "%{+YYYY.MM.dd HH:mm:ss}"
+    }
   }
 }
 output {
   elasticsearch {
     id => "Send to Elasticsearch"
-    hosts => ["10.244.10.77:9200"]
-#    user => "elastic"
-#    password => "changeme"
-    template => "D:/ElasticStack/Apps/Logstash/templates/dmarcxmltemplate.json"
+    hosts => ["ELASTICSEARCHHOST:9200"]
+    document_id => "%{[@metadata][fingerprint]}"
+    template => "/Logstash/templates/dmarcxmltemplate.json"
     template_name => "dmarcxml"
     index => "dmarcxml-%{+YYYY.MM.dd}"
   }
