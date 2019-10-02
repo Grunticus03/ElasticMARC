@@ -74,21 +74,21 @@ Elasticsearch Installation
 3.	Copy the contents of ElasticMARC\elasticsearch to the Elasticsearch directory, overwriting any existing files.
 4.	Open root\config\elasticsearch.yml and modify the following:
 
-| Setting | Value |
-| :--- | :--- |
-| Node.name: | HostnameOfComputer
-| Network.host: | IPv4 address Elasticsearch will listen on, use 0.0.0.0 to listen on all addresses. |
-| http.port: | Port Elasticsearch will listen on, 9200 is used by default. |
-| (Optional) path.data: | Where Elasticsearch will store indexed data.  Default: root\data.|
-| (Optional) path.logs: | Where Elasticsearch will store logs.  Default: root\logs. |
+| Setting | Value | Default |
+| :--- | :--- | :--- |
+| Node.name: | HostnameOfComputer |  |
+| Network.host: | IPv4 address Elasticsearch will listen on, use 0.0.0.0 to listen on all addresses. |  |
+| http.port: | Port Elasticsearch will listen on | 9200 |
+| (Optional) path.data: | Where Elasticsearch will store indexed data. | root\data|
+| (Optional) path.logs: | Where Elasticsearch will store logs. | root\logs |
 <br/>
 <br/>
 5.	Open root\config\jvm.options and modify the following, if necessary:
 
-| Setting | Value |
+| Setting | Value | Default |
 | :--- | :--- |
-| -Xms1g | Initial RAM Elasticsearch JVM will use. |
-| -Xmx1g | Max RAM Elasticsearch JVM will use. |
+| -Xms | Initial RAM Elasticsearch JVM will use. | 1g |
+| -Xmx | Max RAM Elasticsearch JVM will use. | 1g |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 <br/>
 6.	Open an administrative CMD window and enter the following commands: <br/>
@@ -113,13 +113,13 @@ Kibana Installation
 2.	Copy the contents of ElasticMARC\kibana to the Kibana directory, overwriting any existing files.
 3.	Open root\config\kibana.yml and modify the following:
 
-| Setting | Value |
-| :--- | :--- |
-| Server.port: | Port to listen on, Default is 5601 |
-| Server.host: | Server hostname |
-| Server.name: | Server hostname |
-| Elasticsearch.url: | http&#58;//SERVERHOSTNAME:IP |
-| Logging.dest: | File and path for logging.  Folder must exist, file will be created, preserve double quotes |
+| Setting | Value | Default |
+| :--- | :--- | :--- |
+| Server.port: | Port to listen on | 5601 |
+| Server.host: | Server hostname |  |
+| Server.name: | Server hostname |  |
+| Elasticsearch.url: | http://SERVERHOSTNAME:IP |  |
+| Logging.dest: | File and path for logging.  Folder must exist, file will be created, preserve double quotes | root\log |
 *   If you want to change the logging level, change the appropriate logging line value to true.
 *   Kibana does not have a service installer, we will utilize NSSM to create a service for Kibana.
 <br/>
@@ -166,10 +166,10 @@ Logstash Installation
 <br/>
 5.	Open root\config\jvm.options and modify the following:
 
-| Setting | Value |
-| :--- | :--- |
-| -Xms1g | Initial RAM used by Logstash JVM |
-| -Xmx1g | Max RAM used by Logstash JVM |
+| Setting | Value | Default |
+| :--- | :--- | :--- |
+| -Xms | Initial RAM used by Logstash JVM | 1g |
+| -Xmx | Max RAM used by Logstash JVM | 1g |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Logstash JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
 <br/>
 <br/>
