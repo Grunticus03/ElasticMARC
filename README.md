@@ -86,7 +86,7 @@ Elasticsearch Installation
 5.	Open root\config\jvm.options and modify the following, if necessary:
 
 | Setting | Value | Default |
-| :--- | :--- |
+| :--- | :--- | :--- |
 | -Xms | Initial RAM Elasticsearch JVM will use. | 1g |
 | -Xmx | Max RAM Elasticsearch JVM will use. | 1g |
 *   Xms and Xmx should be set to the same size.  If they are not, you may experience performance issues.  These values represent the amount of RAM the Elasticsearch JVM will allocate.  For the purposes of this guide, 1GB is sufficient.
