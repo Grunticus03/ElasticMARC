@@ -104,7 +104,7 @@
 				"email": {
 					"properties": {
 						"count": {
-							"type": "short"
+							"type": "integer"
 						},
 						"dkim_evaluation": {
 							"type": "text",
