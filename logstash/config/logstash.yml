@@ -5,7 +5,3 @@
  http.port: 9600
 # path.data: "c:/ElasticStack/Data/Logstash"
 # path.logs: "c:/ElasticStack/Logs/Logstash"
-# log.level: trace
-# Uncomment and configure below for x-pack integration
-# xpack.monitoring.elasticsearch.username: logstash_system
-# xpack.monitoring.elasticsearch.password: logstash
