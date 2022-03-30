@@ -3,4 +3,3 @@ bootstrap.memory_lock: true
 network.host: 0.0.0.0
 http.port: 9200
 #path.data: C:/ElasticStack/Data/ElasticSearch
-#path.logs: C:/ElasticStack/Logs/Elasticsearch
