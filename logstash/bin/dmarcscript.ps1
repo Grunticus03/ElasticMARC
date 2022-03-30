@@ -5,7 +5,7 @@ $urireq = Read-Host "Enter FQDN to CAS(https://mail.example.com)"
 $downloadDirectory = Read-Host "Path to save attachments to"
 $outfile = Read-Host "Path to save extracted files"
 $Ingest = Read-Host "Path to save modified XML reports"
-$FolderDest = Read-Host "Name of mailbox folder to move message to (must exist)"
+$FolderToRead = Read-Host "Name of mailbox folder to read messages from (must exist)"
 $Cleanup = Read-Host "Cleanup attachments and unmodified reports? (y|n)"
 Clear-Host
 ###########Download messages from mailbox###########
@@ -60,10 +60,11 @@ if ($API22 -ne $true -and $API12 -ne $true) {
 }
 
 #Set Exchange Version (Values found here: https://msdn.microsoft.com/en-us/library/microsoft.exchange.webservices.data.exchangeversion(v=exchg.80).aspx)
-$ExchangeVersion = [Microsoft.Exchange.WebServices.Data.ExchangeVersion]::Exchange2013_SP1
+#$ExchangeVersion = [Microsoft.Exchange.WebServices.Data.ExchangeVersion]::Exchange2013_SP1
+# Commented out because 365 Cloud doesn't have/use
 
 #Create Exchange Service Object
-$service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService($ExchangeVersion)
+$service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService()
 
 #Set Credentials to use two options are available Option 1 to use explicit credentials or Option 2 use the Default (logged On) credentials
 #Credentials Option 1 using UPN for the windows Account
@@ -90,57 +91,51 @@ $service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService($Excha
 $uri = [System.URI] "$urireq/ews/Exchange.asmx"
 $service.Url = $uri
 
-#Bind to the Inbox folder
-$Sfha = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.EmailMessageSchema]::HasAttachments, $true)
-$folderid= new-object Microsoft.Exchange.WebServices.Data.FolderId([Microsoft.Exchange.WebServices.Data.WellKnownFolderName]::Inbox,"$MailboxName")
-$Inbox = [Microsoft.Exchange.WebServices.Data.Folder]::Bind($service,$folderid)
+#Bind to root folder
+$folderid = new-object Microsoft.Exchange.WebServices.Data.FolderId([Microsoft.Exchange.WebServices.Data.WellKnownFolderName]::MsgFolderRoot,$MailboxName)
+$tfTargetFolder = [Microsoft.Exchange.WebServices.Data.Folder]::Bind($service,$folderid)
 
-#Find attachments and copy them to the download directory
-$ivItemView = New-Object Microsoft.Exchange.WebServices.Data.ItemView(200)
+#Find and bind to selected folder
+$fvFolderView = new-object Microsoft.Exchange.WebServices.Data.FolderView(1)
+$fvFolderView.PropertySet = New-Object Microsoft.Exchange.WebServices.Data.PropertySet([Microsoft.Exchange.Webservices.Data.BasePropertySet]::FirstClassProperties)
+$fvFolderView.PropertySet.Add([Microsoft.Exchange.Webservices.Data.FolderSchema]::DisplayName)
+$fvFolderView.Traversal = [Microsoft.Exchange.Webservices.Data.FolderTraversal]::Deep
+$SfSearchDMARC = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.FolderSchema]::DisplayName,$FolderToRead)
+$FindDMARC = $service.FindFolders($tfTargetFolder.Id,$SfSearchDMARC,$fvFolderView)
+$DMARC = [Microsoft.Exchange.WebServices.Data.Folder]::Bind($service,$FindDMARC.id)
+
+#Find untagged e-mails to retrieve attachments and copy them to the download directory
+$ivItemView = New-Object Microsoft.Exchange.WebServices.Data.ItemView(1)
+$ivItemView.OrderBy.Add([Microsoft.Exchange.Webservices.Data.ItemSchema]::DateTimeReceived, [Microsoft.Exchange.Webservices.Data.SortDirection]::Ascending)
+$CategoryToFind = "RUA:Treated"
+$aqs = "NOT System.Category:'" + $CategoryToFind + "'"
+$findItemsResults = $service.FindItems($DMARC.Id,$aqs,$ivItemView)
+[Collections.Generic.List[String]]$RUAtreated = "RUA:Treated"
+
 #Moved to line 3
 if ((Test-Path $downloadDirectory) -eq $false) {
   New-Item -ItemType Directory -Force -Path $downloadDirectory | Out-Null
 }
-$findItemsResults = $Inbox.FindItems($Sfha,$ivItemView)
-foreach($miMailItems in $findItemsResults.Items){
-    $miMailItems.Load()
-    foreach($attach in $miMailItems.Attachments){
-        $attach.Load()
-        $fiFile = new-object System.IO.FileStream(($downloadDirectory + "\" + $attach.Name.ToString()), [System.IO.FileMode]::Create)
-        $fiFile.Write($attach.Content, 0, $attach.Content.Length)
-        $fiFile.Close()
-        $i++
-        Write-Progress -activity "Downloading attachments..." -status "Downloaded: $i of $($findItemsResults.Subject.Count)"
+
+#Loop through all e-mails found without "RUA:Treated" category/tag
+do {
+    foreach($miMailItems in $findItemsResults.Items){
+        #Bind to each message - changing category tags require this
+        $eachMessage = [Microsoft.Exchange.WebServices.Data.Item]::Bind($service,$miMailItems.Id.UniqueId)
+        foreach($attach in $eachMessage.Attachments){
+            $attach.Load()
+            $filename = $downloadDirectory + "\" + $attach.Name.ToString()
+            $fiFile = new-object System.IO.FileStream($filename, [System.IO.FileMode]::Create)
+            $fiFile.Write($attach.Content, 0, $attach.Content.Length)
+            $fiFile.Close()
+        }
+        #Add category tag for "RUA:Treated", mark as read and update
+        $eachMessage.Categories = $RUAtreated
+        $eachMessage.IsRead = $true
+        $eachMessage.Update([Microsoft.Exchange.WebServices.Data.ConflictResolutionMode]::AlwaysOverwrite)
+        $findItemsResults = $service.FindItems($DMARC.Id,$aqs,$ivItemView)
     }
-}
-
-#This section moves emails from the Inbox to a subfolder of "Inbox" called "Review Completed", make sure to create the folder.
-#Get the ID of the folder to move to
-#Moved to line 4
-$fvFolderView =  New-Object Microsoft.Exchange.WebServices.Data.FolderView(100)
-$fvFolderView.Traversal = [Microsoft.Exchange.WebServices.Data.FolderTraversal]::Shallow;
-$SfSearchFilter = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.FolderSchema]::DisplayName,"$FolderDest")
-$findFolderResults = $Inbox.FindFolders($SfSearchFilter,$fvFolderView)
-
-#Define ItemView to retrieve just 200 Items
-$ivItemView =  New-Object Microsoft.Exchange.WebServices.Data.ItemView(200)
-$fiItems = $null
-do
-{
-    $fiItems = $Inbox.FindItems($Sfha,$ivItemView)
-    #[Void]$service.LoadPropertiesForItems($fiItems,$psPropset)
-    foreach($Item in $fiItems.Items) {
-        #Mark item as read
-        $Item.IsRead = $true
-        $item.Update("AlwaysOverwrite")
-        #Move the Message
-        $Item.Move($findFolderResults.Folders[0].Id) | Out-Null
-        $p++
-        Write-Progress -activity "Moving messages" -status "Moved: $p of $($fiItems.Subject.Count)"
-    }
-    $ivItemView.Offset += $fiItems.Items.Count
-}while($fiItems.MoreAvailable -eq $true)
-
+} while ($findItemsResults.MoreAvailable -eq $true)
 
 ###########Decompress Archives###########
 Function DeGZip-File{

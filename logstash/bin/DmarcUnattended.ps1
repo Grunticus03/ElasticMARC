@@ -11,8 +11,8 @@ $downloadDirectory = "D:\Temp\Attachments"
 $outfile = "D:\Temp\Extracted"
 #Where to save modified XML files.
 $Ingest = "D:\Temp\DMARC"
-#Where to move emails after report has been downloaded.
-$FolderDest = "Review Completed"
+#Where emails will be read from.
+$FolderToRead = "DMARC"
 
 ###########Download messages from mailbox###########
 $Provider=New-Object Microsoft.CSharp.CSharpCodeProvider
@@ -50,43 +50,56 @@ if ($API22 -ne $true -and (Test-Path "C:\Program Files\Microsoft\Exchange\Web Se
 if ($API22 -ne $true -and $API12 -ne $true) {
     Exit
 }
-$ExchangeVersion = [Microsoft.Exchange.WebServices.Data.ExchangeVersion]::Exchange2013_SP1
-$service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService($ExchangeVersion)
+
+# Commented out because 365 Cloud doesn't have/use
+#$ExchangeVersion = [Microsoft.Exchange.WebServices.Data.ExchangeVersion]::Exchange2013_SP1
+$service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService()
 $uri = [System.URI] "$urireq/ews/Exchange.asmx"
 $service.Url = $uri
-$Sfha = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.EmailMessageSchema]::HasAttachments, $true)
-$folderid= new-object Microsoft.Exchange.WebServices.Data.FolderId([Microsoft.Exchange.WebServices.Data.WellKnownFolderName]::Inbox,"$MailboxName")
-$Inbox = [Microsoft.Exchange.WebServices.Data.Folder]::Bind($service,$folderid)
-$ivItemView = New-Object Microsoft.Exchange.WebServices.Data.ItemView(200)
+#$Sfha = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.EmailMessageSchema]::HasAttachments, $true)
+
+#Find and bind to selected folder
+$fvFolderView = new-object Microsoft.Exchange.WebServices.Data.FolderView(1)
+$fvFolderView.PropertySet = New-Object Microsoft.Exchange.WebServices.Data.PropertySet([Microsoft.Exchange.Webservices.Data.BasePropertySet]::FirstClassProperties)
+$fvFolderView.PropertySet.Add([Microsoft.Exchange.Webservices.Data.FolderSchema]::DisplayName)
+$fvFolderView.Traversal = [Microsoft.Exchange.Webservices.Data.FolderTraversal]::Deep
+$SfSearchDMARC = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.FolderSchema]::DisplayName,$FolderToRead)
+$FindDMARC = $service.FindFolders($tfTargetFolder.Id,$SfSearchDMARC,$fvFolderView)
+$DMARC = [Microsoft.Exchange.WebServices.Data.Folder]::Bind($service,$FindDMARC.id)
+
+#Find untagged e-mails to retrieve attachments and copy them to the download directory
+$ivItemView = New-Object Microsoft.Exchange.WebServices.Data.ItemView(1)
+$ivItemView.OrderBy.Add([Microsoft.Exchange.Webservices.Data.ItemSchema]::DateTimeReceived, [Microsoft.Exchange.Webservices.Data.SortDirection]::Ascending)
+$CategoryToFind = "RUA:Treated"
+$aqs = "NOT System.Category:'" + $CategoryToFind + "'"
+$findItemsResults = $service.FindItems($DMARC.Id,$aqs,$ivItemView)
+[Collections.Generic.List[String]]$RUAtreated = "RUA:Treated"
+
 if ((Test-Path $downloadDirectory) -eq $false) {
     New-Item -ItemType Directory -Force -Path $downloadDirectory | Out-Null
 }
-$findItemsResults = $Inbox.FindItems($Sfha,$ivItemView)
-foreach($miMailItems in $findItemsResults.Items){
-    $miMailItems.Load()
-    foreach($attach in $miMailItems.Attachments){
-        $attach.Load()
-        $fiFile = new-object System.IO.FileStream(($downloadDirectory + "\" + $attach.Name.ToString()), [System.IO.FileMode]::Create)
-        $fiFile.Write($attach.Content, 0, $attach.Content.Length)
-        $fiFile.Close()
+
+#Loop through all e-mails found without "RUA:Treated" category/tag
+do {
+    foreach($miMailItems in $findItemsResults.Items){
+        #Bind to each message - changing category tags require this
+        $eachMessage = [Microsoft.Exchange.WebServices.Data.Item]::Bind($service,$miMailItems.Id.UniqueId)
+        #Loop through attachments and save them to $downloadDirectory
+        foreach($attach in $eachMessage.Attachments){
+            $attach.Load()
+            $filename = $downloadDirectory + "\" + $attach.Name.ToString()
+            $fiFile = new-object System.IO.FileStream($filename, [System.IO.FileMode]::Create)
+            $fiFile.Write($attach.Content, 0, $attach.Content.Length)
+            $fiFile.Close()
+        }
+        #Add category tag for "RUA:Treated", mark as read and update
+        $eachMessage.Categories = $RUAtreated
+        $eachMessage.IsRead = $true
+        $eachMessage.Update([Microsoft.Exchange.WebServices.Data.ConflictResolutionMode]::AlwaysOverwrite)
+        $findItemsResults = $service.FindItems($DMARC.Id,$aqs,$ivItemView)
     }
-}
-$fvFolderView =  New-Object Microsoft.Exchange.WebServices.Data.FolderView(100)
-$fvFolderView.Traversal = [Microsoft.Exchange.WebServices.Data.FolderTraversal]::Shallow;
-$SfSearchFilter = new-object Microsoft.Exchange.WebServices.Data.SearchFilter+IsEqualTo([Microsoft.Exchange.WebServices.Data.FolderSchema]::DisplayName,"$FolderDest")
-$findFolderResults = $Inbox.FindFolders($SfSearchFilter,$fvFolderView)
-$ivItemView =  New-Object Microsoft.Exchange.WebServices.Data.ItemView(200)
-$fiItems = $null
-do
-{
-    $fiItems = $Inbox.FindItems($Sfha,$ivItemView)
-    foreach($Item in $fiItems.Items) {
-        $Item.IsRead = $true
-        $item.Update("AlwaysOverwrite")
-        $Item.Move($findFolderResults.Folders[0].Id) | Out-Null
-    }
-    $ivItemView.Offset += $fiItems.Items.Count
-}while($fiItems.MoreAvailable -eq $true)
+} while ($findItemsResults.MoreAvailable -eq $true)
+
 ###########Decompress Archives###########
 Function DeGZip-File{
     Param(
